@@ -176,7 +176,7 @@ def calculateScores(size, turn, gridList, score):
         else:
             adjacent[3] = "COR"
 
-        print(adjacent)
+
         # Calculate point for beach
         if gridList[index] == "R":
             if adjacent[0] == "I" or adjacent[0] == "R" or adjacent[0] == "C": 
