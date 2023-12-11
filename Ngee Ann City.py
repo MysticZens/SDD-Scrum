@@ -383,10 +383,10 @@ while True:
     while True:
 
         # Print turn number
-        if playerChoice == "1" or playerChoice == "2":  # or playerChoice == "Freebuild":
+        if playerChoice == "1" or playerChoice == "2":
             turn += 1
 
-        if playerChoice == "4":
+        elif playerChoice == "4":
             turn -= 1
 
         print("\nTurn", turn)
@@ -504,7 +504,7 @@ while True:
         elif playerChoice == "3":
             print("Not implemented.")
             break
-        
+
         elif playerChoice == "4":
             if turn <= 1:
                 print("No buildings have been built yet!")
