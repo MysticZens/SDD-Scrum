@@ -106,22 +106,13 @@ def adjacentValidation(locationIndex, validation, size, turn, gridList):
 
     return validation
 
-
 def calculateScores(size, turn, gridList, score):
     # Use the same adjacency check from AdjacentValidation
     # Define variable
     # Will define if adjacent side is near a corner
     adjacent = [emptyBuilding, emptyBuilding, emptyBuilding, emptyBuilding]
     multiples = []
-    residentialScore = 0
 
-    industrialScore = 0
-
-    commercialScore = 0
-
-    parkScore = 0
-
-    roadScore = 0
 
 
     # Loop for each element in gridList
@@ -137,8 +128,6 @@ def calculateScores(size, turn, gridList, score):
             if index not in multiples:
                 adjacent[0] = gridList[index + 1]
 
-            else:
-                adjacent[0] = "COR"
 
             multiples.clear()
 
@@ -153,8 +142,6 @@ def calculateScores(size, turn, gridList, score):
 
                 adjacent[1] = gridList[index - 1]
 
-            else:
-                adjacent[1] = "COR"
 
             multiples.clear()
 
@@ -164,8 +151,6 @@ def calculateScores(size, turn, gridList, score):
 
             adjacent[2] = gridList[index - size]
 
-        else:
-            adjacent[2] = "COR"
 
         # Down
         # Check if location at up border
@@ -173,153 +158,72 @@ def calculateScores(size, turn, gridList, score):
 
             adjacent[3] = gridList[index + size]
 
-        else:
-            adjacent[3] = "COR"
-
-
         # Calculate point for beach
         if gridList[index] == "R":
             if adjacent[0] == "I" or adjacent[0] == "R" or adjacent[0] == "C": 
-                residentialScore += 1
+                score += 1
 
             if adjacent[1] == "I" or adjacent[1] == "R" or adjacent[1] == "C":
-                residentialScore += 1
+                score += 1
 
             if adjacent[2] == "R" or adjacent[2] == "C":
-                residentialScore += 1
+                score += 1
 
             if adjacent[3] == "R" or adjacent[3] == "C":
-                residentialScore += 1
+                score += 1
 
             if adjacent[0] == "O": 
-                residentialScore += 2
+                score += 1
 
             if adjacent[1] == "O":
-                residentialScore += 2
+                score += 1
 
             if adjacent[2] == "O":
-                residentialScore += 2
+                score += 1
 
             if adjacent[3] == "O":
-                residentialScore += 2
-
-            
-            '''if adjacent[0] == "COR" or adjacent[1] == "COR":
-                residentialScore += 3
-
-            else:
-                residentialScore += 1
-
-            beachScoreList.append(beachScore)
-            beachScore = 0'''
+                score += 1
 
 
         # Calculate point for factories
-        if gridList[index] == "I":
-            industrialScore += 1
-
-                            
-            '''industrialScoreList.append(1)
-
-            if len(industrialScoreList) <= 4:
-
-                for x in range(len(industrialScoreList)):
-                    industrialScoreList[x] = len(industrialScoreList)'''
-
+        elif gridList[index] == "I":
+            print(adjacent)
+            score += 1
 
         # Calculate points for houses
-        if gridList[index] == "C":
+        elif gridList[index] == "C":
             if adjacent[0] == "C": 
-                commercialScore += 1
+                score += 1
             
             if adjacent[1] == "C":
-                commercialScore += 1
+                score += 1
 
             if adjacent[2] == "C":
-                commercialScore += 1
+                score += 1
 
             if adjacent[3] == "C":
-                commercialScore += 1
+                score += 1
 
-                        
-            '''for x in adjacent:
-
-                if x == "FAC":
-                    houseScore = 1
-                    break
-
-                elif x == "HSE" or x == "SHP":
-                    houseScore += 1
-
-                elif x == "BCH":
-                    houseScore += 2
-
-                else:
-                    continue
-
-            houseScoreList.append(houseScore)
-            houseScore = 0'''
-
-
-        if gridList[index] == "O":
+        elif gridList[index] == "O":
             if adjacent[0] == "O": 
-                parkScore += 1
+                score += 1
 
             if adjacent[1] == "O":
-                parkScore += 1
+                score += 1
 
             if adjacent[2] == "O":
-                parkScore += 1
+                score += 1
 
             if adjacent[3] == "O":
-                parkScore += 1
-            '''variable.clear()
-
-            for x in adjacent:
-
-                if adjacent.count(x) > 1 and x != "COR" and x != emptyBuilding:
-
-                    if variable.count(x) == 0:
-                        variable.append(x)
-                        shopScore += 1
-
-                    else:
-                        continue
-
-                elif x == "COR" or x == emptyBuilding:
-                    continue
-
-                else:
-                    shopScore += 1
-
-            shopScoreList.append(shopScore)
-            shopScore = 0'''
-
+                score += 1
 
         # Calculate points for Highway
-        if gridList[index] == "*":
+        elif gridList[index] == "*":
             if adjacent[0] == "*":
-                roadScore += 1
+                score += 1
             if adjacent[1] == "*":
-                roadScore += 1
-            '''number = 0
+                score += 1
 
-            highwayScoreList.append(1)
-
-            if gridList[index - 1] == "HWY":
-
-                if adjacent[0] == "COR" or adjacent[1] == "COR":
-                    continue
-
-                else:
-                    number = highwayScoreList[-2] + 1
-
-                    for x in range(highwayScoreList[-2] + 1):
-                        highwayScoreList[-x] = number'''
-
-
-    # Total Score
-    score = residentialScore + industrialScore + commercialScore + parkScore + roadScore
     return score
 
 def calculateCoins(size, turn, gridList, coin):
@@ -343,8 +247,6 @@ def calculateCoins(size, turn, gridList, coin):
             if index not in multiples:
                 adjacent[0] = gridList[index + 1]
 
-            else:
-                adjacent[0] = "COR"
 
             multiples.clear()
 
@@ -359,8 +261,6 @@ def calculateCoins(size, turn, gridList, coin):
 
                 adjacent[1] = gridList[index - 1]
 
-            else:
-                adjacent[1] = "COR"
 
             multiples.clear()
 
@@ -370,8 +270,6 @@ def calculateCoins(size, turn, gridList, coin):
 
             adjacent[2] = gridList[index - size]
 
-        else:
-            adjacent[2] = "COR"
 
         # Down
         # Check if location at up border
@@ -379,8 +277,7 @@ def calculateCoins(size, turn, gridList, coin):
 
             adjacent[3] = gridList[index + size]
 
-        else:
-            adjacent[3] = "COR"
+
 
 
 
@@ -407,7 +304,7 @@ def calculateCoins(size, turn, gridList, coin):
 
 
         # Calculate points for houses
-        if gridList[index] == "C":
+        elif gridList[index] == "C":
             if adjacent[0] == "R": 
                 coin += 1
 
@@ -486,7 +383,7 @@ while True:
     while True:
 
         # Print turn number
-        if playerChoice == "1" or playerChoice == "2":  # or playerChoice == "Freebuild":
+        if playerChoice == "1" or playerChoice == "2" or playerChoice == "4":  # or playerChoice == "Freebuild":
             turn += 1
         print("\nTurn", turn)
 
@@ -518,6 +415,7 @@ while True:
         print("1. Build a {:1s}\
              \n2. Build a {:1s}\
              \n3. Save game\
+             \n4. Destroy building\
              \n0. Exit to main menu".format(building1, building2))
 
         # Ask input from player
@@ -559,7 +457,7 @@ while True:
             elif len(location) == 3:
                 locationIndex = (rowList.index(
                     location[0]) + 1) + ((int(location[1:3]) - 1) * size)
-            print(locationIndex)
+
             # Validate placement
             # If location is adjacent.
             validation = adjacentValidation(
@@ -590,19 +488,78 @@ while True:
             # Place the building on mapGrid
             if (playerChoice == "1"):
                 gridList[locationIndex - 1] = building1
-                score = calculateScores(size, turn, gridList, score)
-                
+
             else:
                 gridList[locationIndex - 1] = building2
 
-                score = calculateScores(size, turn, gridList, score)
-                coin = calculateCoins(size, turn, gridList, coin)
+            score = calculateScores(size, turn, gridList, score)
+            coin = calculateCoins(size, turn, gridList, coin)
             coin -= 1
             
         # Save the game
         elif playerChoice == "3":
             print("Not implemented.")
             break
+
+        elif playerChoice == "4":
+            while True:
+                try:
+                    location = input("Where do you want to remove the building? ")
+                
+                except:
+                    print("Please enter a valid input.")
+                    continue
+
+                if rowList.count(location[0]) == 0:
+                    print("Please enter a valid input.")
+                    continue
+
+                elif location[1].isnumeric() == False:
+                    print("Please enter a valid input.")
+                    continue
+
+                elif location[1] == "0":
+                    print("Please enter a valid input.")
+                    continue
+
+                else:
+                    break
+                
+
+            if len(location) == 2:
+                locationIndex = (rowList.index(
+                    location[0]) + 1) + ((int(location[1]) - 1) * size)
+                
+            elif len(location) == 3:
+                locationIndex = (rowList.index(
+                    location[0]) + 1) + ((int(location[1:3]) - 1) * size)
+
+            validation = True
+            if gridList[locationIndex - 1] == emptyBuilding:
+                print("There is no building to destroy in this location " + location + ". Please try again.")
+                validation = False
+
+            while validation == False:
+                location = input("Where do you want to remove the building? ")
+                if len(location) == 2:
+                    locationIndex = (rowList.index(
+                    location[0]) + 1) + ((int(location[1]) - 1) * size)
+
+                elif len(location) == 3:
+                    locationIndex = (rowList.index(
+                        location[0]) + 1) + ((int(location[1:3]) - 1) * size)
+
+                if gridList[locationIndex - 1] == emptyBuilding:
+                    print("There is no building to destroy in this location " + location + ". Please try again.")
+                    validation = False
+                    continue
+
+                else:
+                    validation = True
+            gridList[locationIndex - 1] = emptyBuilding
+            score = calculateScores(size, turn, gridList, score)
+            coin = calculateCoins(size, turn, gridList, coin)
+            coin += 1
 
         # Exit to main menu
         elif playerChoice == "0":
