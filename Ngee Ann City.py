@@ -14,9 +14,10 @@ columnList = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10",
 highscorefile = "Highscore.csv"
 validation = True
 score = 0
+buildingCounter = 0
 
 buildingList = ["R", "I", "C", "O", "*"]
-
+buildingNameList = ["a Residential", "an Industry", "a Commercial", "a Park", "a Road"]
 
 def createMap(size, gridList):
     # Create List for number of rows and columns
@@ -50,7 +51,7 @@ def createMap(size, gridList):
     print(border_horizontal)
 
 
-def adjacentValidation(locationIndex, validation, size, turn, gridList):
+def adjacentEmptyValidation(locationIndex, validation, size, turn, gridList):
     # Define variable
     multiples = []
 
@@ -65,8 +66,8 @@ def adjacentValidation(locationIndex, validation, size, turn, gridList):
 
             # Check if location at right border
             if locationIndex - 1 not in multiples:
-                validation = True
-                return validation
+                
+                return
 
             multiples.clear()
 
@@ -80,8 +81,8 @@ def adjacentValidation(locationIndex, validation, size, turn, gridList):
 
             # Check if location at left border
             if locationIndex - 1 not in multiples:
-                validation = True
-                return validation
+                
+                return
 
             multiples.clear()
 
@@ -90,29 +91,38 @@ def adjacentValidation(locationIndex, validation, size, turn, gridList):
     if locationIndex - 1 - size >= 0:
 
         if gridList[locationIndex - 1 - size] != emptyBuilding:
-            validation = True
-            return validation
+            
+            return 
     # Down
     # Check if location at up border
     if locationIndex - 1 + size < size ** 2:
 
         if gridList[locationIndex - 1 + size] != emptyBuilding:
-            validation = True
-            return validation
+            
+            return 
 
-    if turn > 1 and (gridList[locationIndex - 1] == emptyBuilding or gridList[locationIndex + 1] == emptyBuilding or gridList[locationIndex - 1 + size] == emptyBuilding or gridList[locationIndex - 1 - size] == emptyBuilding):
+    count = 0
+    for i in range(len(gridList)):
+        if gridList[i] == emptyBuilding:
+            count += 1
+
+    if (count == size ** 2):
+        return
+
+    if gridList[locationIndex - 1] == emptyBuilding:
         validation = False
         print("You must build next to an existing building.")
 
     return validation
 
-def calculateScores(size, turn, gridList, score):
+
+def calculateScores(size, turn, gridList):
     # Use the same adjacency check from AdjacentValidation
     # Define variable
     # Will define if adjacent side is near a corner
     adjacent = [emptyBuilding, emptyBuilding, emptyBuilding, emptyBuilding]
     multiples = []
-
+    score = 0
 
 
     # Loop for each element in gridList
@@ -187,7 +197,6 @@ def calculateScores(size, turn, gridList, score):
 
         # Calculate point for factories
         elif gridList[index] == "I":
-            print(adjacent)
             score += 1
 
         # Calculate points for houses
@@ -226,13 +235,13 @@ def calculateScores(size, turn, gridList, score):
 
     return score
 
-def calculateCoins(size, turn, gridList, coin):
+def calculateCoins(size, turn, gridList):
     # Use the same adjacency check from AdjacentValidation
     # Define variable
     # Will define if adjacent side is near a corner
     adjacent = [emptyBuilding, emptyBuilding, emptyBuilding, emptyBuilding]
     multiples = []
-    
+    coin = 0
 
     # Loop for each element in gridList
     for index in range(len(gridList)):
@@ -363,7 +372,6 @@ while True:
         # Show highscores
         elif playerChoice == "3":
             print('Not implemented.')
-
         # Check the input the player has put in
         # Check if the player starts a new game
         elif playerChoice == "1":
@@ -383,16 +391,13 @@ while True:
     while True:
 
         # Print turn number
-        if playerChoice == "1" or playerChoice == "2":
+        if playerChoice == "1" or playerChoice == "2" or playerChoice == "4":
             turn += 1
-
-        elif playerChoice == "4":
-            turn -= 1
 
         print("\nTurn", turn)
 
         # End of game Sequence
-        if turn == size ** 2 + 1:
+        if buildingCounter == size ** 2 or coin <= 0:
 
             # Print final message
             print("\nFinal layout of Ngee Ann City: ")
@@ -414,13 +419,15 @@ while True:
 
             building1 = buildingList[randint1]
             building2 = buildingList[randint2]
+            building_name1 = buildingNameList[randint1]
+            building_name2 = buildingNameList[randint2]
 
         # Print the instructions
-        print("1. Build a {:1s}\
-             \n2. Build a {:1s}\
+        print("1. Build {:1s}\
+             \n2. Build {:1s}\
              \n3. Save game\
              \n4. Destroy building\
-             \n0. Exit to main menu".format(building1, building2))
+             \n0. Exit to main menu".format(building_name1 + " (" + building1 + ")", building_name2 + " (" + building2 + ")"))
 
         # Ask input from player
         playerChoice = input("Please enter your choice? ")
@@ -464,7 +471,7 @@ while True:
 
             # Validate placement
             # If location is adjacent.
-            validation = adjacentValidation(
+            validation = adjacentEmptyValidation(
                 locationIndex, validation, size, turn, gridList)
 
             # If location is occupied
@@ -477,11 +484,12 @@ while True:
                 if len(location) == 2:
                     locationIndex = (rowList.index(
                     location[0]) + 1) + ((int(location[1]) - 1) * size)
+                    
 
                 elif len(location) == 3:
                     locationIndex = (rowList.index(
                         location[0]) + 1) + ((int(location[1:3]) - 1) * size)                
-                    validation = adjacentValidation(
+                validation = adjacentEmptyValidation(
                     locationIndex, validation, size, turn, gridList)
 
                 if gridList[locationIndex - 1] != emptyBuilding:
@@ -495,9 +503,9 @@ while True:
 
             else:
                 gridList[locationIndex - 1] = building2
-
-            score = calculateScores(size, turn, gridList, score)
-            coin = calculateCoins(size, turn, gridList, coin)
+            buildingCounter += 1
+            score += calculateScores(size, turn, gridList)
+            coin += calculateCoins(size, turn, gridList)
             coin -= 1
             
         # Save the game
@@ -508,7 +516,6 @@ while True:
         elif playerChoice == "4":
             if turn <= 1:
                 print("No buildings have been built yet!")
-                turn += 1
 
             else:
                 while True:
@@ -543,7 +550,7 @@ while True:
                         location[0]) + 1) + ((int(location[1:3]) - 1) * size)
 
                 validation = True
-        
+                
                 if gridList[locationIndex - 1] == emptyBuilding:
                     print("There is no building to destroy in this location " + location + ". Please try again.")
                     validation = False
@@ -565,9 +572,10 @@ while True:
 
                     else:
                         validation = True
+                buildingCounter -= 1
+                score -= calculateScores(size, turn, gridList)    
                 gridList[locationIndex - 1] = emptyBuilding
-                score = calculateScores(size, turn, gridList, score)
-                coin = calculateCoins(size, turn, gridList, coin)
+                score += calculateScores(size, turn, gridList)
                 coin -= 1
 
         # Exit to main menu
