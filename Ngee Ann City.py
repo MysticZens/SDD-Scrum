@@ -568,7 +568,7 @@ while True:
                 gridList[locationIndex - 1] = emptyBuilding
                 score = calculateScores(size, turn, gridList, score)
                 coin = calculateCoins(size, turn, gridList, coin)
-                coin += 1
+                coin -= 1
 
         # Exit to main menu
         elif playerChoice == "0":
