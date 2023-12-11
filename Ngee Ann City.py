@@ -383,8 +383,12 @@ while True:
     while True:
 
         # Print turn number
-        if playerChoice == "1" or playerChoice == "2" or playerChoice == "4":  # or playerChoice == "Freebuild":
+        if playerChoice == "1" or playerChoice == "2":  # or playerChoice == "Freebuild":
             turn += 1
+
+        if playerChoice == "4":
+            turn -= 1
+
         print("\nTurn", turn)
 
         # End of game Sequence
@@ -476,8 +480,8 @@ while True:
 
                 elif len(location) == 3:
                     locationIndex = (rowList.index(
-                        location[0]) + 1) + ((int(location[1:3]) - 1) * size)
-                validation = adjacentValidation(
+                        location[0]) + 1) + ((int(location[1:3]) - 1) * size)                
+                    validation = adjacentValidation(
                     locationIndex, validation, size, turn, gridList)
 
                 if gridList[locationIndex - 1] != emptyBuilding:
@@ -500,66 +504,71 @@ while True:
         elif playerChoice == "3":
             print("Not implemented.")
             break
-
+        
         elif playerChoice == "4":
-            while True:
-                try:
-                    location = input("Where do you want to remove the building? ")
-                
-                except:
-                    print("Please enter a valid input.")
-                    continue
+            if turn <= 1:
+                print("No buildings have been built yet!")
+                turn += 1
 
-                if rowList.count(location[0]) == 0:
-                    print("Please enter a valid input.")
-                    continue
+            else:
+                while True:
+                    try:
+                        location = input("Where do you want to remove the building? ")
+                    
+                    except:
+                        print("Please enter a valid input.")
+                        continue
 
-                elif location[1].isnumeric() == False:
-                    print("Please enter a valid input.")
-                    continue
+                    if rowList.count(location[0]) == 0:
+                        print("Please enter a valid input.")
+                        continue
 
-                elif location[1] == "0":
-                    print("Please enter a valid input.")
-                    continue
+                    elif location[1].isnumeric() == False:
+                        print("Please enter a valid input.")
+                        continue
 
-                else:
-                    break
-                
+                    elif location[1] == "0":
+                        print("Please enter a valid input.")
+                        continue
 
-            if len(location) == 2:
-                locationIndex = (rowList.index(
-                    location[0]) + 1) + ((int(location[1]) - 1) * size)
-                
-            elif len(location) == 3:
-                locationIndex = (rowList.index(
-                    location[0]) + 1) + ((int(location[1:3]) - 1) * size)
+                    else:
+                        break
 
-            validation = True
-            if gridList[locationIndex - 1] == emptyBuilding:
-                print("There is no building to destroy in this location " + location + ". Please try again.")
-                validation = False
-
-            while validation == False:
-                location = input("Where do you want to remove the building? ")
                 if len(location) == 2:
                     locationIndex = (rowList.index(
-                    location[0]) + 1) + ((int(location[1]) - 1) * size)
-
+                        location[0]) + 1) + ((int(location[1]) - 1) * size)
+                    
                 elif len(location) == 3:
                     locationIndex = (rowList.index(
                         location[0]) + 1) + ((int(location[1:3]) - 1) * size)
 
+                validation = True
+        
                 if gridList[locationIndex - 1] == emptyBuilding:
                     print("There is no building to destroy in this location " + location + ". Please try again.")
                     validation = False
-                    continue
 
-                else:
-                    validation = True
-            gridList[locationIndex - 1] = emptyBuilding
-            score = calculateScores(size, turn, gridList, score)
-            coin = calculateCoins(size, turn, gridList, coin)
-            coin += 1
+                while validation == False:
+                    location = input("Where do you want to remove the building? ")
+                    if len(location) == 2:
+                        locationIndex = (rowList.index(
+                        location[0]) + 1) + ((int(location[1]) - 1) * size)
+
+                    elif len(location) == 3:
+                        locationIndex = (rowList.index(
+                            location[0]) + 1) + ((int(location[1:3]) - 1) * size)
+
+                    if gridList[locationIndex - 1] == emptyBuilding:
+                        print("There is no building to destroy in this location " + location + ". Please try again.")
+                        validation = False
+                        continue
+
+                    else:
+                        validation = True
+                gridList[locationIndex - 1] = emptyBuilding
+                score = calculateScores(size, turn, gridList, score)
+                coin = calculateCoins(size, turn, gridList, coin)
+                coin += 1
 
         # Exit to main menu
         elif playerChoice == "0":
