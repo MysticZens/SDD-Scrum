@@ -7,6 +7,7 @@ turn = 0
 coin = 16
 emptyBuilding = "   "
 gridList = []
+
 rowList = ["A", "B", "C", "D", "E", "F", "G", "H", "I",
            "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T"]
 columnList = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10",
@@ -14,7 +15,7 @@ columnList = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10",
 highscorefile = "Highscore.csv"
 validation = True
 score = 0
-buildingCounter = 0
+
 
 buildingList = ["R", "I", "C", "O", "*"]
 buildingNameList = ["a Residential", "an Industry", "a Commercial", "a Park", "a Road"]
@@ -397,7 +398,7 @@ while True:
         print("\nTurn", turn)
 
         # End of game Sequence
-        if buildingCounter == size ** 2 or coin <= 0:
+        if (all(item is not emptyBuilding for item in gridList) and emptyBuilding not in gridList) or coin <= 0:
 
             # Print final message
             print("\nFinal layout of Ngee Ann City: ")
@@ -503,7 +504,6 @@ while True:
 
             else:
                 gridList[locationIndex - 1] = building2
-            buildingCounter += 1
             score += calculateScores(size, turn, gridList)
             coin += calculateCoins(size, turn, gridList)
             coin -= 1
@@ -572,7 +572,6 @@ while True:
 
                     else:
                         validation = True
-                buildingCounter -= 1
                 score -= calculateScores(size, turn, gridList)    
                 gridList[locationIndex - 1] = emptyBuilding
                 score += calculateScores(size, turn, gridList)
