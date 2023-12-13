@@ -3,16 +3,19 @@ import math
 import csv
 
 size = 20
-turn = 0
+turn = 1
 coin = 16
 emptyBuilding = "   "
 gridList = []
-
+highscorefile = "Leaderboards.csv"
+savefile = "Savefile.txt"
+datafile = open(highscorefile, "a")
+datafile.close()
 rowList = ["A", "B", "C", "D", "E", "F", "G", "H", "I",
            "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T"]
 columnList = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10",
               "11", "12", "13", "14", "15", "16", "17", "18", "19", "20"]
-highscorefile = "Highscore.csv"
+
 validation = True
 score = 0
 
@@ -347,6 +350,116 @@ def calculateCoins(size, turn, gridList):
 
     return coin
 
+def highscores(highscorefile):
+    highScoreList = []
+
+
+    #Display Highscores
+    print("\n{:^31}".format(str(size)+" x "+str(size)))
+    print("--------- HIGH SCORES ---------\
+         \nPos Player                Score\
+         \n--- ------                -----")
+
+    #Look through datafiles for highscores
+    with open(highscorefile, "r") as file:
+        reader = csv.reader(file,delimiter = "\t")
+        for row in reader:
+          if int(row[0]) == size:
+            #Check according to size
+            highScoreLine = [row[1],row[2]]
+            highScoreList.append(highScoreLine)
+
+                
+        #Sort from highest to lowest in score
+        highScoreList.sort(key = lambda x: x[1],reverse=True)
+        file.close()
+        
+        #Display the highScores
+        for x in range(len(highScoreList)):
+            if x < 10:
+                print("{:>2}. {:<20}{:>7}".format(str(x+1),str(highScoreList[x][0]),str(highScoreList[x][1])))
+            else:
+                break
+
+def writeHighscore(highscorefile, size, finalScore):
+    highScoreList = []
+    
+    #Look through datafiles for highscores
+    with open(highscorefile, "r") as file:
+        reader = csv.reader(file,delimiter = "\t")
+        for row in reader:
+            print(row)
+            #Check according to size
+            if int(row[0]) == size:
+                highScoreLine = [row[1],row[2]]
+                highScoreList.append(highScoreLine)
+        #Sort from highest to lowest in score
+        highScoreList.sort(key = lambda x: x[1],reverse=True)
+        file.close()
+        
+    for x in range(len(highScoreList)):
+        #Basically check if highscore is achieved
+        if finalScore >= int(highScoreList[x][1]) and x < 10:
+            print("Congratulations! You made the high score board at position {}!".format(str(x+1)))
+            while True:
+                try:
+                    name = input("Please enter your name(max 20 chars): ")
+                    
+                except:
+                    print("Please input another name.")
+                    continue
+                if len(name) > 20:
+                    print("Your name is too long, please input another name.")
+                    continue
+                else:
+                    break
+                
+            newHighScore = [name, str(finalScore)]
+            highScoreList.append(newHighScore)
+            highScoreList.sort(key = lambda x: x[1],reverse=True)
+            with open(highscorefile,"a",newline="") as file:
+                    file.write(str(size)+"\t"+name+"\t"+str(finalScore)+"\n")
+                    file.close()
+
+
+            break
+        
+    #Check if highScoreList is empty
+    if len(highScoreList) == 0:
+        
+        print("Congratulations! You made the high score board at position 1!")
+        while True:
+            try:
+                name = input("Please enter your name(max 20 chars): ")
+                
+            except:
+                print("Please input another name.")
+                continue
+            if len(name) > 20:
+                print("Your name is too long, please input another name.")
+                continue
+            else:
+                break
+            
+        newHighScore = [name, str(finalScore)]
+        highScoreList.append(newHighScore)
+        #Actually start writing to write code into file
+        with open(highscorefile,"a",newline="") as file:
+            file.write(str(size)+"\t"+name+"\t"+str(finalScore)+"\n")
+            file.close()
+
+        
+    #Display the highScores
+    #Remove any values if position is above 10
+    while len(highScoreList) > 10:
+        highScoreList.pop()
+        
+    print("--------- HIGH SCORES ---------\
+         \nPos Player                Score\
+         \n--- ------                -----")
+    for x in range(len(highScoreList)):
+        print("{:>2}. {:<20}{:>7}".format(str(x+1),str(highScoreList[x][0]),str(highScoreList[x][1])))
+
 # Main Menu
 print("Welcome, mayor of Ngee Ann City!\
      \n----------------------------")
@@ -368,15 +481,28 @@ while True:
 
         # Load Saved Game
         elif playerChoice == "2":
-            print('Not implemented.')
+            datafile = open(savefile,"r")
+
+            for line in datafile:
+                tempList = line.split("|")
+
+            tempList = [x.strip(' ') for x in tempList]
+            size = int(tempList[0])
+            turn = int(tempList[1])
+            gridList = tempList[2].split(",")
+            for x in range(len(gridList)):
+                if gridList[x] == "EMPTY":
+                    gridList[x] = "   "
+
+            break
 
         # Show highscores
         elif playerChoice == "3":
-            print('Not implemented.')
+            highscores(highscorefile)
         # Check the input the player has put in
         # Check if the player starts a new game
         elif playerChoice == "1":
-            turn = 0
+            turn = 1
             gridList = []
 
             # Create an element for each tile in map in gridList
@@ -390,11 +516,6 @@ while True:
 
     # Loop Turns until player wants to stop or Game Ends
     while True:
-
-        # Print turn number
-        if playerChoice == "1" or playerChoice == "2" or playerChoice == "4":
-            turn += 1
-
         print("\nTurn", turn)
 
         # End of game Sequence
@@ -405,7 +526,14 @@ while True:
 
             # Create Map
             createMap(size, gridList)
+            
+            #Calculate final scores
+            finalScore = calculateScores(size, turn, gridList)
+            print("Final calculated score: " + str(finalScore))
 
+            #Display HighScores
+            writeHighscore(highscorefile, size, finalScore)
+            
             break
 
         # Print the map
@@ -434,8 +562,7 @@ while True:
         playerChoice = input("Please enter your choice? ")
 
         # check if player wants to build
-        if playerChoice == "1" or playerChoice == "2":
-
+        if playerChoice == "1" or playerChoice == "2":            
             # Check where to build
             # Input validation
             while True:
@@ -507,15 +634,34 @@ while True:
             score += calculateScores(size, turn, gridList)
             coin += calculateCoins(size, turn, gridList)
             coin -= 1
+            turn += 1
             
         # Save the game
         elif playerChoice == "3":
-            print("Not implemented.")
-            break
+            #open savefile for writing
+            tempVariable = ""
+            for x in range(len(gridList)):
+                
+                if gridList[x] == emptyBuilding:
+                    tempVariable += "EMPTY"
+                    
+                else:
+                    tempVariable += gridList[x]
+
+                if x != len(gridList) - 1:
+                    tempVariable += ","
+            
+            datafile = open(savefile, "w")
+                
+            #Write all necessary save data needed to run game            
+            datafile.write("{:<1d}|{:<2d}|{:<700s}".format(size,turn,tempVariable))
+            datafile.close()
+            print("Game Saved!")
 
         elif playerChoice == "4":
             if turn <= 1:
                 print("No buildings have been built yet!")
+                continue
 
             else:
                 while True:
@@ -576,6 +722,7 @@ while True:
                 gridList[locationIndex - 1] = emptyBuilding
                 score += calculateScores(size, turn, gridList)
                 coin -= 1
+                turn += 1
 
         # Exit to main menu
         elif playerChoice == "0":
